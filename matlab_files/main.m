@@ -470,27 +470,35 @@ Ja(6,1:3) = gradient(psi_x, [theta_0,d_1,theta_2]);   % Derivative of roll
 Ja=subs(Ja,[theta_0,d_1,theta_2],q);
 Ja=simplify(Ja);
 
-% syms phi theta psi
-% assume([phi,theta,psi],'real')
-% 
-% rot_x=[1,0,0;
-%     0,cos(psi),-sin(psi);
-%     0,sin(psi),cos(psi)]
-% 
-% rot_y=[cos(theta),0,sin(theta);
-%      0,1,0;
-%      -sin(theta),0,cos(theta)]
-% 
-% rot_z=[cos(phi),-sin(phi),0;
-%     sin(phi),cos(phi),0;
-%     0,0,1]
-% 
-% omega=[psi,0,0]'+rot_x*[0,theta,0]'+rot_x*rot_y*[0,0,phi]'
+syms phi theta psi
+assume([phi,theta,psi],'real')
+
+rot_x=[1,0,0;
+    0,cos(psi),-sin(psi);
+    0,sin(psi),cos(psi)];
+
+rot_y=[cos(theta),0,sin(theta);
+     0,1,0;
+     -sin(theta),0,cos(theta)];
+
+rot_z=[cos(phi),-sin(phi),0;
+    sin(phi),cos(phi),0;
+    0,0,1];
+
+%Z Y X convenction
+
+d_phi= eye(3)*[0,0,1]';
+
+d_theta= rot_z*[0,1,0]';
+
+d_psi= rot_z*rot_y*[1,0,0]';
+
+T_matrix=[d_phi,d_theta,d_psi];
 
 %T matrix that maps J = T * Ja (the rotational part)
 T_matrix=[0, -sin(phi_z), cos(phi_z)*cos(theta_y);
-    0, cos(phi_z), sin(phi_z)*cos(theta_y);
-    1,    0,      -sin(theta_y)];
+        0, cos(phi_z), sin(phi_z)*cos(theta_y);
+        1,    0,      -sin(theta_y)];
 %block diagonal matrix
 T_matrix = blkdiag(eye(3), T_matrix);
 
